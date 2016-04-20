@@ -28,6 +28,13 @@ class ChatScreenState extends State<ChatScreen> {
   List<ChatMessage> _messages = <ChatMessage>[];
   InputValue _currentMessage = InputValue.empty;
 
+  @override
+  void dispose() {
+    for (ChatMessage message in _messages)
+      message.animationController.dispose();
+    super.dispose();
+  }
+
   void _handleMessageChanged(InputValue value) {
     setState(() {
       _currentMessage = value;
@@ -37,9 +44,17 @@ class ChatScreenState extends State<ChatScreen> {
   void _handleMessageAdded(InputValue value) {
     setState(() {
       _currentMessage = InputValue.empty;
+      AnimationController animationController = new AnimationController(
+        duration: new Duration(milliseconds: 700)
+      );
       ChatUser sender = new ChatUser(name: _name, color: _color);
-      ChatMessage message = new ChatMessage(sender: sender, text: value.text);
+      ChatMessage message = new ChatMessage(
+        sender: sender,
+        text: value.text,
+        animationController: animationController
+      );
       _messages.add(message);
+      animationController.forward();
     });
   }
 
@@ -97,24 +112,33 @@ class ChatUser {
 }
 
 class ChatMessage {
-  ChatMessage({ this.sender, this.text });
+  ChatMessage({ this.sender, this.text, this.animationController });
   final ChatUser sender;
   final String text;
+  final AnimationController animationController;
 }
 
 class ChatMessageListItem extends StatelessWidget {
   ChatMessageListItem(this.message);
+
   final ChatMessage message;
 
   Widget build(BuildContext context) {
-    return new ListItem(
-      dense: true,
-      leading: new CircleAvatar(
-        child: new Text(message.sender.name[0]),
-        backgroundColor: message.sender.color
+    return new SizeTransition(
+      sizeFactor: new CurvedAnimation(
+        parent: message.animationController,
+        curve: Curves.easeOut
       ),
-      title: new Text(message.sender.name),
-      subtitle: new Text(message.text)
+      axisAlignment: 0.0,
+      child: new ListItem(
+        dense: true,
+        leading: new CircleAvatar(
+          child: new Text(message.sender.name[0]),
+          backgroundColor: message.sender.color
+        ),
+        title: new Text(message.sender.name),
+        subtitle: new Text(message.text)
+      )
     );
   }
 }
