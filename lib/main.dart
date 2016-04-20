@@ -4,6 +4,7 @@
 
 import 'dart:math' show Random;
 
+import 'package:firebase/firebase.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -26,7 +27,32 @@ class ChatScreenState extends State<ChatScreen> {
   String _name = "Guest${new Random().nextInt(1000)}";
   Color _color = Colors.accents[new Random().nextInt(Colors.accents.length)][700];
   List<ChatMessage> _messages = <ChatMessage>[];
+  Firebase _firebase = new Firebase("https://firechat-flutter.firebaseio.com/");
   InputValue _currentMessage = InputValue.empty;
+
+  @override
+  void initState() {
+    super.initState();
+    _firebase.onChildAdded.listen((Event event) {
+      setState(() {
+        var val = event.snapshot.val();
+        AnimationController animationController = new AnimationController(
+          duration: new Duration(milliseconds: 700)
+        );
+        ChatUser sender = new ChatUser(
+          name: val['sender']['name'],
+          color: new Color(val['sender']['color'])
+        );
+        ChatMessage message = new ChatMessage(
+          sender: sender,
+          text: val['text'],
+          animationController: animationController
+        );
+        _messages.add(message);
+        animationController.forward();
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -42,19 +68,13 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   void _handleMessageAdded(InputValue value) {
+    var message = {
+      'sender': { 'name': _name, 'color': _color.value },
+      'text': value.text,
+    };
+    _firebase.push().set(message);
     setState(() {
       _currentMessage = InputValue.empty;
-      AnimationController animationController = new AnimationController(
-        duration: new Duration(milliseconds: 700)
-      );
-      ChatUser sender = new ChatUser(name: _name, color: _color);
-      ChatMessage message = new ChatMessage(
-        sender: sender,
-        text: value.text,
-        animationController: animationController
-      );
-      _messages.add(message);
-      animationController.forward();
     });
   }
 
