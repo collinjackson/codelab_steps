@@ -24,6 +24,8 @@ class ChatScreen extends StatefulWidget {
 
 class ChatScreenState extends State<ChatScreen> {
   String _name = "Guest${new Random().nextInt(1000)}";
+  Color _color = Colors.accents[new Random().nextInt(Colors.accents.length)][700];
+  List<ChatMessage> _messages = <ChatMessage>[];
   InputValue _currentMessage = InputValue.empty;
 
   void _handleMessageChanged(InputValue value) {
@@ -35,6 +37,9 @@ class ChatScreenState extends State<ChatScreen> {
   void _handleMessageAdded(InputValue value) {
     setState(() {
       _currentMessage = InputValue.empty;
+      ChatUser sender = new ChatUser(name: _name, color: _color);
+      ChatMessage message = new ChatMessage(sender: sender, text: value.text);
+      _messages.add(message);
     });
   }
 
@@ -69,7 +74,47 @@ class ChatScreenState extends State<ChatScreen> {
       appBar: new AppBar(
         title: new Text("Chatting as $_name")
       ),
-      body: _buildTextComposer()
+      body: new Column(
+        children: <Widget>[
+          new Flexible(
+            child: new Block(
+              padding: new EdgeInsets.symmetric(horizontal: 8.0),
+              scrollAnchor: ViewportAnchor.end,
+              children: _messages.map((m) => new ChatMessageListItem(m)).toList()
+            )
+          ),
+          _buildTextComposer(),
+        ]
+      )
+    );
+  }
+}
+
+class ChatUser {
+  ChatUser({ this.name, this.color });
+  final String name;
+  final Color color;
+}
+
+class ChatMessage {
+  ChatMessage({ this.sender, this.text });
+  final ChatUser sender;
+  final String text;
+}
+
+class ChatMessageListItem extends StatelessWidget {
+  ChatMessageListItem(this.message);
+  final ChatMessage message;
+
+  Widget build(BuildContext context) {
+    return new ListItem(
+      dense: true,
+      leading: new CircleAvatar(
+        child: new Text(message.sender.name[0]),
+        backgroundColor: message.sender.color
+      ),
+      title: new Text(message.sender.name),
+      subtitle: new Text(message.text)
     );
   }
 }
