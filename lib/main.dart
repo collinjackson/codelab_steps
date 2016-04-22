@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:math' show Random;
+import 'dart:io';
 
 import 'package:firebase/firebase.dart';
 import 'package:flutter/material.dart';
@@ -27,13 +28,27 @@ class ChatScreenState extends State<ChatScreen> {
   String _name = "Guest${new Random().nextInt(1000)}";
   Color _color = Colors.accents[new Random().nextInt(Colors.accents.length)][700];
   List<ChatMessage> _messages = <ChatMessage>[];
-  Firebase _firebase = new Firebase("https://firechat-flutter.firebaseio.com/");
+  FirebaseApp _firebase;
   InputValue _currentMessage = InputValue.empty;
 
   @override
   void initState() {
     super.initState();
-    _firebase.onChildAdded.listen((Event event) {
+    String databaseUrl = "https://gh-flutter-test.firebaseio.com";
+    if (Platform.isAndroid) {
+      _firebase = new FirebaseApp(
+         databaseUrl: databaseUrl,
+         apiKey: "AIzaSyB-or9GemrHFjcDisJMTKJSk4OGT4j1gGw",
+         appId: "1:569834062290:ios:2fee9b7dc675817c"
+     );
+   } else if (Platform.isIOS) {
+      _firebase = new FirebaseApp(
+        databaseUrl: databaseUrl,
+        apiKey: "AIzaSyD349xFuq1iEostYUbBAJWx3J2rVMvbhGs",
+        appId: "1:569834062290:android:e0c732c7e4a393d5"
+      );
+   }
+    _firebase.database.reference().onChildAdded.listen((Event event) {
       setState(() {
         var val = event.snapshot.val();
         AnimationController animationController = new AnimationController(
