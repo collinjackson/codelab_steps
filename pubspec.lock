@@ -19,10 +19,31 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.14.0"
+  firebase_database:
+    description:
+      ref: HEAD
+      resolved-ref: "8f4fa024a8b588a3cbda4dd089a7d0f8eb2101bc"
+      url: "git://github.com/flutter/firebase_database"
+    source: git
+    version: "0.0.0"
+  firebase_storage:
+    description:
+      ref: HEAD
+      resolved-ref: "2f2f90960cf504106c0d7f5be20b980583cbb2c2"
+      url: "git://github.com/flutter/firebase_storage"
+    source: git
+    version: "0.0.0"
   flutter:
     description: flutter
     source: sdk
     version: "0.0.22"
+  google_sign_in:
+    description:
+      ref: HEAD
+      resolved-ref: "9896e4b449f4fb01e97c4c1380d6f9503041030e"
+      url: "git://github.com/flutter/google_sign_in"
+    source: git
+    version: "0.0.0"
   http:
     description:
       name: http
@@ -35,6 +56,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.1"
+  image_picker:
+    description:
+      ref: HEAD
+      resolved-ref: "530a921ec44c3c2a2a7a730040c0ed7c28c552ca"
+      url: "git://github.com/flutter/image_picker"
+    source: git
+    version: "0.0.0"
   intl:
     description:
       name: intl

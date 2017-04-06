@@ -1,5 +1,5 @@
-name: friendlychat_flutter
-description: A new flutter project.
+name: friendlychat
+description: Simple, extensible chat app powered by Flutter and Firebase.
 
 dependencies:
   flutter:
